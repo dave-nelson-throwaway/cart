@@ -25,6 +25,10 @@ module Cart
         []
       end
 
+      def promo_rate(code)
+        @promos.rate(code)
+      end
+
     end
   end
 end
