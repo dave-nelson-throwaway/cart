@@ -1,14 +1,11 @@
 require_relative '../../spec_helper'
 
 describe Cart::Rules::BuySomeGetSomeFree do
-  
-  before :context do
-    @rule = Cart::Rules::BuySomeGetSomeFree.new(Cart::Config::Products.new,
-                                                'ult_large', 3, 2)
-  end
 
-  context 'Buy some get some free rule' do
+  context 'Buy some get some free rule (no month)' do
     before :example do
+      @rule = Cart::Rules::BuySomeGetSomeFree.new(Cart::Config::Products.new,
+                                                  'ult_large', 3, 2)
       @item = Cart::Item.new('ult_large', 3)
     end
 
@@ -35,6 +32,28 @@ describe Cart::Rules::BuySomeGetSomeFree do
 
       it 'Bills at the discounted quantity' do
         expect(@rule.bill_items(@item).first.price).to eq(44.90 * 2)
+      end
+    end
+  end
+  
+  context 'Buy some get some free rule (first month only)' do
+    before :example do
+      @rule = Cart::Rules::BuySomeGetSomeFree.new(Cart::Config::Products.new,
+                                                  'ult_large', 3, 2, 1)
+      @item = Cart::Item.new('ult_large', 3)
+    end
+
+    describe '#does_apply?' do
+      it 'doesn''t apply if no month is specified' do
+        expect(@rule.does_apply?(@item)).to be_falsey
+      end
+
+      it 'doesn''t apply if the month is later than the limit' do
+        expect(@rule.does_apply?(@item, 1)).to be_falsey
+      end
+
+      it 'applies if the month is earlier than the limit' do
+        expect(@rule.does_apply?(@item, 0)).to be_truthy
       end
     end
   end
