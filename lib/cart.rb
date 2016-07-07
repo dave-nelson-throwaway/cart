@@ -1,3 +1,4 @@
+require 'cart/config'
 require 'cart/item'
 require 'cart/version'
 
