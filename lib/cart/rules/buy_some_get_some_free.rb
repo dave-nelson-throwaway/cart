@@ -8,15 +8,17 @@ module Cart
     # (e.g. 3 for 2).
     class BuySomeGetSomeFree
 
-      def initialize(products, code, bonus_qty, discount_qty)
+      def initialize(products, code, bonus_qty, discount_qty, month_limit=nil)
         @products = products
         @code = code
         @bonus_qty = bonus_qty
         @discount_qty = discount_qty
+        @month_limit = month_limit
       end
 
       def does_apply?(cart_item, month=nil)
-        @code.eql?(cart_item.product) && cart_item.quantity >= @bonus_qty
+        @code.eql?(cart_item.product) && cart_item.quantity >= @bonus_qty &&
+          (@month_limit == nil || (month && month < @month_limit))
       end
 
       def bill_items(cart_item)
